@@ -39,9 +39,6 @@ resource "aws_security_group" "efs_sg" {
     ipv6_cidr_blocks = ["::/0"]
   }
   tags = var.efs_volume_tags
-  depends_on = [
-    helm_release.efs-csi
-  ]
 }
 
 # create efs file system.
@@ -94,6 +91,9 @@ resource "helm_release" "efs-csi" {
   version    = var.csi_chart_version
   namespace  = var.csi_namespace
   values     = length(var.helm_values) > 0 ? var.helm_values : ["${file("${path.module}/helm-values.yaml")}"]
+  depends_on = [
+    aws_efs_file_system.storage
+  ]
 
   # Set volume tags
   dynamic "set" {
