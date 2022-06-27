@@ -1,4 +1,4 @@
-locals = {
+locals {
   efs_list = flatten([
     for i in range(var.efs_number) : [
       for s in var.subnet_ids : {
