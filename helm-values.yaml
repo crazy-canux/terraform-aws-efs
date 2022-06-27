@@ -14,7 +14,6 @@ storageClasses:
         storageclass.kubernetes.io/is-default-class: "true"
       parameters:
         provisioningMode: efs-ap
-        fileSystemId: 
         directoryPerms: "700"
         gidRangeStart: "1000" # optional
         gidRangeEnd: "2000" # optional
