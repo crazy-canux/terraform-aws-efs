@@ -24,56 +24,11 @@ data "aws_caller_identity" "current" {}
 ##############################
 # module and resources
 ##############################
-# Deploy CSI driver helm chart
-resource "helm_release" "efs-csi" {
-  name       = "efs-csi"
-  repository = var.csi_chart_repo_url
-  chart      = "aws-efs-csi-driver"
-  version    = var.csi_chart_version
-  namespace  = var.csi_namespace
-  values     = length(var.helm_values) > 0 ? var.helm_values : ["${file("${path.module}/helm-values.yaml")}"]
-
-  # Set volume tags
-  dynamic "set" {
-    for_each = var.efs_volume_tags
-    content {
-      name  = "controller.extraVolumeTags.${set.key}"
-      value = set.value
-    }
-  }
-
-  # Set any extra values provided by the user
-  dynamic "set" {
-    for_each = var.extra_set_values
-    content {
-      name  = set.value.name
-      value = set.value.value
-      type  = set.value.type
-    }
-  }
-
-  # Set file system id for storageclass 
-  set {
-    name  = "storageClasses[0].parameters.fileSystemId"
-    value = var.csi_service_account
-  }
-
-  # Set efs-csi service account name and IAM role annotaion
-  set {
-    name  = "controller.serviceAccount.name"
-    value = var.csi_service_account
-  }
-  set {
-    name  = "controller.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-    value = aws_iam_role.efs_csi_role.arn
-  }
-}
-
 # create efs security group
 resource "aws_security_group" "efs_sg" {
   name        = "kaizen_dev-Efs-Security-Group"
   description = "Efs security group"
-  vpc_id      = local.vpc_id
+  vpc_id      = var.vpc_id
 
   ingress {
     description      = "nfs access"
@@ -83,7 +38,7 @@ resource "aws_security_group" "efs_sg" {
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
-  tags = local.tags
+  tags = var.efs_volume_tags
   depends_on = [
     helm_release.efs-csi
   ]
@@ -93,7 +48,7 @@ resource "aws_security_group" "efs_sg" {
 resource "aws_efs_file_system" "storage" {
   count            = var.efs_number
   performance_mode = "generalPurpose"
-  tags             = var.tags
+  tags             = var.efs_volume_tags
   depends_on = [
     aws_security_group.efs_sg
   ]
@@ -129,4 +84,49 @@ resource "aws_efs_access_point" "default_access_point" {
   depends_on = [
     aws_efs_mount_target.mount_target
   ]
+}
+
+# Deploy CSI driver helm chart
+resource "helm_release" "efs-csi" {
+  name       = "efs-csi"
+  repository = var.csi_chart_repo_url
+  chart      = "aws-efs-csi-driver"
+  version    = var.csi_chart_version
+  namespace  = var.csi_namespace
+  values     = length(var.helm_values) > 0 ? var.helm_values : ["${file("${path.module}/helm-values.yaml")}"]
+
+  # Set volume tags
+  dynamic "set" {
+    for_each = var.efs_volume_tags
+    content {
+      name  = "controller.extraVolumeTags.${set.key}"
+      value = set.value
+    }
+  }
+
+  # Set any extra values provided by the user
+  dynamic "set" {
+    for_each = var.extra_set_values
+    content {
+      name  = set.value.name
+      value = set.value.value
+      type  = set.value.type
+    }
+  }
+
+  # Set file system id for storageclass 
+  set {
+    name  = "storageClasses[0].parameters.fileSystemId"
+    value = aws_efs_file_system.storage.id
+  }
+
+  # Set efs-csi service account name and IAM role annotaion
+  set {
+    name  = "controller.serviceAccount.name"
+    value = var.csi_service_account
+  }
+  set {
+    name  = "controller.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+    value = aws_iam_role.efs_csi_role.arn
+  }
 }

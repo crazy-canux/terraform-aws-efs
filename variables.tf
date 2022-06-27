@@ -10,7 +10,7 @@ variable "oidc_issuer" {
 }
 
 variable "csi_namespace" {
-  description = "EBS CSI namespace"
+  description = "EFS CSI namespace"
   type        = string
   default     = "kube-system"
 }
@@ -28,7 +28,7 @@ variable "csi_chart_repo_url" {
 }
 
 variable "csi_chart_version" {
-  description = "EBS CSI helm chart version"
+  description = "EFS CSI helm chart version"
   type        = string
   default     = "2.2.7"
 }
@@ -67,7 +67,7 @@ variable "subnet_ids" {
   description = "subnet ids"
 }
 
-variable "tags" {
-  type        = list(any)
-  description = "tags"
+variable "vpc_id" {
+  type        = string
+  description = "vpc id"
 }
