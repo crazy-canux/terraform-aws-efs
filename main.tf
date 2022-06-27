@@ -26,7 +26,7 @@ data "aws_caller_identity" "current" {}
 ##############################
 # create efs security group
 resource "aws_security_group" "efs_sg" {
-  name        = "kaizen_dev-Efs-Security-Group"
+  name_prefix        = "Efs-Security-Group-"
   description = "Efs security group"
   vpc_id      = var.vpc_id
 
