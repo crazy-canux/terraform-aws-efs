@@ -9,10 +9,11 @@ controller:
     create: true
 
 storageClasses:
-    - name: efs-sc
+    - name: 
       annotations:
         storageclass.kubernetes.io/is-default-class: "true"
       parameters:
+        fileSystemId:
         provisioningMode: efs-ap
         directoryPerms: "700"
         gidRangeStart: "1000" # optional

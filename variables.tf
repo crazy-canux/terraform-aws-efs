@@ -71,3 +71,9 @@ variable "vpc_id" {
   type        = string
   description = "vpc id"
 }
+
+variable "storage_class" {
+  type = string
+  description = "storage class name"
+  default = "efs-sc"
+}

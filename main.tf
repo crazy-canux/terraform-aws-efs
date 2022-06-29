@@ -114,11 +114,16 @@ resource "helm_release" "efs-csi" {
     }
   }
 
-  # Set file system id for storageclass 
-  # Warning: only create SC for first file system.
+  # Set storageclass and file system id.
+  # TODO: support multi efs file system.
+  # TODO: support multi storageclass.
   set {
     name  = "storageClasses[0].parameters.fileSystemId"
     value = aws_efs_file_system.storage[0].id
+  }
+  set {
+    name  = "storageClasses[0].name"
+    value = var.storage_class
   }
 
   # Set efs-csi service account name and IAM role annotaion

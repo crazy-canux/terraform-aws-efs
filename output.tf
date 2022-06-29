@@ -5,3 +5,7 @@ output "fs_id" {
 output "access_point_id" {
   value = aws_efs_access_point.default_access_point.*.id
 }
+
+output "storage_class" {
+  value = var.storage_class
+}
