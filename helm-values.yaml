@@ -19,5 +19,3 @@ storageClasses:
         gidRangeStart: "1000" # optional
         gidRangeEnd: "2000" # optional
         basePath: "/dynamic_provisioning" # optional
-      volumeBindingMode: Immediate
-      reclaimPolicy: Delete

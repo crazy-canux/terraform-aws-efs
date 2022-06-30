@@ -73,7 +73,12 @@ variable "vpc_id" {
 }
 
 variable "storage_class" {
-  type = string
+  type        = string
   description = "storage class name"
-  default = "efs-sc"
+  default     = "efs-sc"
+}
+
+variable "private_subnet_cidrs" {
+  type        = list(string)
+  description = "private subnet cidrs in vpc."
 }

@@ -26,17 +26,16 @@ data "aws_caller_identity" "current" {}
 ##############################
 # create efs security group
 resource "aws_security_group" "efs_sg" {
-  name_prefix        = "Efs-Security-Group-"
-  description = "Efs security group"
+  name_prefix = "Efs-Security-Group-"
+  description = "Allow inbound NFS traffic from private subnets of the VPC"
   vpc_id      = var.vpc_id
 
   ingress {
-    description      = "nfs access"
-    from_port        = 2049
-    to_port          = 2049
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
+    description = "nfs access"
+    from_port   = 2049
+    to_port     = 2049
+    protocol    = "tcp"
+    cidr_blocks = var.private_subnet_cidrs
   }
   tags = var.efs_volume_tags
 }
