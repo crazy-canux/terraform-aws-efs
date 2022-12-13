@@ -45,6 +45,7 @@ resource "aws_efs_file_system" "storage" {
   count            = var.efs_number
   performance_mode = "generalPurpose"
   tags             = var.efs_volume_tags
+  encrypted    = var.encrypted
   depends_on = [
     aws_security_group.efs_sg
   ]

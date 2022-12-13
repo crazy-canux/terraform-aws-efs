@@ -82,3 +82,9 @@ variable "private_subnet_cidrs" {
   type        = list(string)
   description = "private subnet cidrs in vpc."
 }
+
+variable "encrypted" {
+  type = bool
+  description = "encrypt disk."
+  default = true
+}
