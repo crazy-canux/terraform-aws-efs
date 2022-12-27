@@ -85,7 +85,7 @@ resource "aws_efs_access_point" "default_access_point" {
 
 # Deploy CSI driver helm chart
 resource "helm_release" "efs-csi" {
-  timeout    = 600
+  timeout    = 900
   name       = "efs-csi"
   repository = var.csi_chart_repo_url
   chart      = "aws-efs-csi-driver"
